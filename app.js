@@ -1,0 +1,6 @@
+'use strict';
+const select=document.getElementById('operation'),fields=document.getElementById('fields'),result=document.getElementById('result');
+for(const [key,op] of Object.entries(EngineeringMath.operations)){const option=document.createElement('option');option.value=key;option.textContent=op.label;select.append(option);}
+function update(){fields.replaceChildren();const op=EngineeringMath.operations[select.value];op.fields.forEach((name,i)=>{const label=document.createElement('label');label.htmlFor='value-'+i;label.textContent=name;const input=document.createElement(op.multiline&&i===0?'textarea':'input');input.id=label.htmlFor;input.required=true;input.autocomplete='off';if(input.tagName==='TEXTAREA')input.rows=4;else input.type='text';fields.append(label,input);});result.textContent='Enter values for '+op.label+'.';}
+select.addEventListener('change',update);
+document.getElementById('calculator').addEventListener('submit',event=>{event.preventDefault();try{const op=EngineeringMath.operations[select.value];const values=op.fields.map((_,i)=>document.getElementById('value-'+i).value);const answer=op.run(...values);result.textContent=Array.isArray(answer)?answer.map((v,i)=>'x'+(i+1)+' = '+v).join('\n'):'Result: '+answer;}catch(error){result.textContent='Check your input: '+error.message;}});update();
